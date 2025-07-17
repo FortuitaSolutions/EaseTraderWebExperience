@@ -121,6 +121,22 @@
                     <div style="font-size: 20px;">📈</div>
                     <span style="font-size: 11px; margin-top: 4px;">Analytics</span>
                 </button>
+                <button onclick="navigateTo('data_features')" style="
+                    flex: 1;
+                    border: none;
+                    background: none;
+                    padding: 8px;
+                    font-size: 12px;
+                    color: ${currentPage === 'data_features' ? '#4A90E2' : '#666'};
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                ">
+                    <div style="font-size: 20px;">📋</div>
+                    <span style="font-size: 11px; margin-top: 4px;">Data</span>
+                </button>
                 <button onclick="navigateTo('profile')" style="
                     flex: 1;
                     border: none;
