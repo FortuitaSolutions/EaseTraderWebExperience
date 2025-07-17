@@ -37,6 +37,12 @@
             return;
         }
         
+        // Remove existing mobile navigation elements to avoid duplicates
+        const existingMobileNav = document.querySelector('.mobile-nav');
+        if (existingMobileNav) {
+            existingMobileNav.remove();
+        }
+        
         // Create mobile navigation HTML
         const navHTML = `
             <nav id="mobile-bottom-nav" style="
@@ -162,6 +168,9 @@
                         </button>
                         <button onclick="navigateTo('subscription')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
                             💳 Subscription
+                        </button>
+                        <button onclick="navigateTo('auth')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            🔐 Login / Sign Up
                         </button>
                         <button onclick="navigateTo('landing')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
                             🏠 Home
