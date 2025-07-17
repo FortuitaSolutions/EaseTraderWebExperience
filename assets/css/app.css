@@ -1,8 +1,6 @@
 /* Mobile-first responsive design */
-* { 
+.mobile-shell * { 
     box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
 }
 
 :root {
@@ -14,15 +12,19 @@
     --nav-height: 60px;
 }
 
-body { 
+body.mobile-shell { 
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
     overscroll-behavior: none;
+    overflow-x: hidden;
+}
+
+/* Only apply mobile styles when pages are loaded without their own styles */
+.page:not([data-has-styles]) {
     background-color: var(--background-color);
     color: var(--text-color);
-    overflow-x: hidden;
 }
 
 #app {

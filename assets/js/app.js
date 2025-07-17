@@ -111,11 +111,36 @@ async function loadPage(pageName, updateHistory = true) {
 
 // Adapt pages for mobile view
 function adaptPageForMobile(html, pageName) {
-    // Wrap content in mobile container
-    let mobileHtml = '<div class="page active">';
+    // Extract and inject CSS from the page
+    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+    if (styleMatch) {
+        // Remove any existing page styles
+        const existingStyles = document.querySelectorAll('style[data-page]');
+        existingStyles.forEach(style => style.remove());
+        
+        // Add new page styles
+        styleMatch.forEach(styleTag => {
+            const style = document.createElement('style');
+            style.setAttribute('data-page', pageName);
+            const styleContent = styleTag.replace(/<\/?style[^>]*>/gi, '');
+            style.innerHTML = styleContent;
+            document.head.appendChild(style);
+        });
+    }
     
-    // Add page header if not auth/landing
-    if (pageName !== 'auth' && pageName !== 'landing') {
+    // Extract body content
+    const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    let bodyContent = bodyMatch ? bodyMatch[1] : html;
+    
+    // Remove any script tags to avoid conflicts
+    bodyContent = bodyContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+    
+    // Wrap content in mobile container
+    const hasStyles = styleMatch && styleMatch.length > 0;
+    let mobileHtml = `<div class="page active"${hasStyles ? ' data-has-styles="true"' : ''}>`;
+    
+    // Add page header if not auth/landing and page doesn't have its own styling
+    if (pageName !== 'auth' && pageName !== 'landing' && !hasStyles) {
         const titles = {
             'dashboard': 'Dashboard',
             'analytics': 'Analytics',
@@ -129,7 +154,7 @@ function adaptPageForMobile(html, pageName) {
     }
     
     // Process the HTML content
-    mobileHtml += html;
+    mobileHtml += bodyContent;
     mobileHtml += '</div>';
     
     // Replace desktop navigation with mobile-friendly links
