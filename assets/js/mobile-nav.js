@@ -105,13 +105,13 @@
                     </svg>
                     <span style="font-size: 11px; margin-top: 4px;">Strategy</span>
                 </button>
-                <button onclick="navigateTo('profile')" style="
+                <button onclick="showMobileMenu()" style="
                     flex: 1;
                     border: none;
                     background: none;
                     padding: 8px;
                     font-size: 12px;
-                    color: ${currentPage === 'profile' ? '#4A90E2' : '#666'};
+                    color: #666;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -119,21 +119,69 @@
                     cursor: pointer;
                 ">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
                     </svg>
-                    <span style="font-size: 11px; margin-top: 4px;">Profile</span>
+                    <span style="font-size: 11px; margin-top: 4px;">Menu</span>
                 </button>
             </nav>
         `;
         
+        // Add mobile menu overlay
+        const menuHTML = `
+            <div id="mobile-menu-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 10000;
+                display: none;
+            " onclick="hideMobileMenu()">
+                <div style="
+                    position: absolute;
+                    bottom: 60px;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border-radius: 20px 20px 0 0;
+                    padding: 20px;
+                    max-height: 70vh;
+                    overflow-y: auto;
+                " onclick="event.stopPropagation()">
+                    <h3 style="margin-bottom: 20px; text-align: center;">More Pages</h3>
+                    <div style="display: grid; gap: 10px;">
+                        <button onclick="navigateTo('profile')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            👤 Profile
+                        </button>
+                        <button onclick="navigateTo('backtesting')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            📊 Backtesting
+                        </button>
+                        <button onclick="navigateTo('data_features')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            📈 Data Features
+                        </button>
+                        <button onclick="navigateTo('subscription')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            💳 Subscription
+                        </button>
+                        <button onclick="navigateTo('landing')" style="padding: 15px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; text-align: left;">
+                            🏠 Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
         // Add to page
         document.body.insertAdjacentHTML('beforeend', navHTML);
+        document.body.insertAdjacentHTML('beforeend', menuHTML);
         
         // Add padding to body to prevent overlap
         document.body.style.paddingBottom = '80px';
         
-        // Make navigateTo function global
+        // Make functions global
         window.navigateTo = navigateTo;
+        window.showMobileMenu = showMobileMenu;
+        window.hideMobileMenu = hideMobileMenu;
         
         // Fix internal links
         fixInternalLinks();
@@ -173,5 +221,20 @@
                 });
             }
         });
+    }
+    
+    // Mobile menu functions
+    function showMobileMenu() {
+        const overlay = document.getElementById('mobile-menu-overlay');
+        if (overlay) {
+            overlay.style.display = 'block';
+        }
+    }
+    
+    function hideMobileMenu() {
+        const overlay = document.getElementById('mobile-menu-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
     }
 })();
