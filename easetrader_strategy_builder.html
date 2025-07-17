@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseTrader - Strategy Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --surface-secondary: #f8fafc;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --surface: #1f2937;
+            --surface-secondary: #111827;
+            --text: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-secondary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Strategy Builder Layout */
+        .builder-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+        }
+
+        .builder-section {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Article Input Section */
+        .article-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .input-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .url-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .url-field {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .url-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .fetch-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fetch-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .article-textarea {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .article-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .analyze-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+
+        .analyze-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .analyze-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Claude Chat Section */
+        .claude-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            line-height: 1.5;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .message.system {
+            align-self: center;
+            background: var(--warning);
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 0.75rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .chat-field {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            min-width: 44px;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .send-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* Strategy Preview */
+        .strategy-preview {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .strategy-preview.active {
+            display: block;
+        }
+
+        .strategy-preview h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .strategy-params {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .param-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .param-value {
+            color: var(--text);
+        }
+
+        .create-strategy-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .create-strategy-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .builder-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main {
+                padding-bottom: 6rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .chat-messages {
+                max-height: 300px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots:after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">EaseTrader</a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#" class="active">Strategies</a></li>
+                        <li><a href="#">Backtests</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#">Data</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                    <div class="user-profile">
+                        <div class="avatar">JD</div>
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">AI Strategy Builder</h1>
+                <p class="page-subtitle">Create trading strategies from market analysis articles using Claude AI</p>
+            </div>
+
+            <div class="builder-layout">
+                <!-- Article Input Section -->
+                <div class="builder-section">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Article Analysis</h2>
+                            <p class="section-subtitle">Input market analysis or news articles</p>
+                        </div>
+                    </div>
+
+                    <div class="article-input">
+                        <div class="input-tabs">
+                            <button class="tab-button active" onclick="switchTab('text')">Text Input</button>
+                            <button class="tab-button" onclick="switchTab('url')">URL Import</button>
+                        </div>
+
+                        <div class="input-container">
+                            <div class="url-input" id="urlInput" style="display: none;">
+                                <input type="url" class="url-field" placeholder="Enter article URL..." id="articleUrl">
+                                <button class="fetch-btn" onclick="fetchArticle()">Fetch</button>
+                            </div>
+
+                            <textarea 
+                                class="article-textarea" 
+                                id="articleText"
+                                placeholder="Paste your market analysis article here...
+
+Example: 
+'The technology sector is showing strong momentum driven by AI adoption. Key indicators suggest a bullish trend with increasing volume and positive earnings revisions. Major tech stocks are breaking through resistance levels, with particular strength in cloud computing and semiconductor companies. The VIX is declining, indicating reduced market fear, while the S&P 500 tech sector is outperforming the broader market by 15% this quarter.'"
+                            ></textarea>
+
+                            <button class="analyze-btn" id="analyzeBtn" onclick="analyzeArticle()">
+                                🤖 Analyze with Claude AI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Claude Chat Section -->
+                <div class="builder-section">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Claude Strategy Chat</h2>
+                            <p class="section-subtitle">Collaborate with AI to build your strategy</p>
+                        </div>
+                    </div>
+
+                    <div class="claude-chat">
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message system">
+                                    👋 Hi! I'm Claude, your AI strategy assistant. Paste an article above and click "Analyze" to get started, or ask me anything about trading strategies!
+                                </div>
+                            </div>
+
+                            <div class="typing-indicator" id="typingIndicator">
+                                Claude is typing<span class="loading-dots"></span>
+                            </div>
+
+                            <div class="chat-input">
+                                <textarea 
+                                    class="chat-field" 
+                                    id="chatInput"
+                                    placeholder="Ask Claude about the analysis or strategy..."
+                                    onkeypress="handleChatKeyPress(event)"
+                                ></textarea>
+                                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                                    ➤
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="strategy-preview" id="strategyPreview">
+                            <h3>📊 Proposed Strategy</h3>
+                            <div class="strategy-params">
+                                <div class="param-group">
+                                    <div class="param-label">Strategy Type</div>
+                                    <div class="param-value">Momentum Trading</div>
+                                </div>
+                                <div class="param-group">
+                                    <div class="param-label">Sector Focus</div>
+                                    <div class="param-value">Technology</div>
+                                </div>
+                                <div class="param-group">
+                                    <div class="param-label">Time Frame</div>
+                                    <div class="param-value">Daily</div>
+                                </div>
+                                <div class="param-group">
+                                    <div class="param-label">Risk Level</div>
+                                    <div class="param-value">Medium</div>
+                                </div>
+                            </div>
+                            <button class="create-strategy-btn" onclick="createStrategy()">
+                                🚀 Create & Backtest Strategy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div>Dashboard</div>
+            </a>
+            <a href="#" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">📊</div>
+                <div>Strategies</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚡</div>
+                <div>Backtests</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📈</div>
+                <div>Analytics</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">👤</div>
+                <div>Profile</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let currentTab = 'text';
+        let chatHistory = [];
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            const activeTab = document.querySelector(`[onclick="switchTab('${tab}')"]`);
+            activeTab.classList.add('active');
+            
+            const urlInput = document.getElementById('urlInput');
+            if (tab === 'url') {
+                urlInput.style.display = 'flex';
+            } else {
+                urlInput.style.display = 'none';
+            }
+        }
+
+        function fetchArticle() {
+            const url = document.getElementById('articleUrl').value;
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            // Simulate fetching article
+            const fetchBtn = document.querySelector('.fetch-btn');
+            fetchBtn.textContent = 'Fetching...';
+            fetchBtn.disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById('articleText').value = `Sample article content fetched from: ${url}
+                
+The technology sector is experiencing unprecedented growth driven by artificial intelligence adoption across industries. Key technical indicators show strong bullish momentum with the NASDAQ 100 breaking through major resistance levels. Volume has increased 40% above the 20-day average, suggesting institutional accumulation.
+
+Key observations:
+- AI stocks leading sector performance with 25% gains
+- Cloud computing companies showing strong earnings beats
+- Semiconductor demand increasing due to AI chip requirements
+- VIX declining to sub-20 levels indicating reduced market fear
+- S&P 500 tech sector outperforming broader market by 15%
+
+The technical setup suggests continuation of the uptrend with potential for further gains in the coming weeks.`;
+                
+                fetchBtn.textContent = 'Fetch';
+                fetchBtn.disabled = false;
+            }, 2000);
+        }
+
+        function analyzeArticle() {
+            const articleText = document.getElementById('articleText').value;
+            if (!articleText.trim()) {
+                alert('Please enter an article or URL');
+                return;
+            }
+            
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.textContent = '🔄 Analyzing...';
+            analyzeBtn.disabled = true;
+            
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                const analysis = `📊 **Article Analysis Complete**
+
+Based on the article, I've identified several key trading opportunities:
+
+**Market Sentiment:** Bullish on technology sector
+**Key Drivers:** AI adoption, strong earnings, technical breakouts
+**Risk Level:** Medium (VIX declining suggests stable conditions)
+
+**Proposed Strategy:**
+- **Type:** Momentum Trading
+- **Sector:** Technology (AI, Cloud, Semiconductors)
+- **Entry:** On breakout above resistance with volume confirmation
+- **Stop Loss:** 5% below entry
+- **Target:** 15-20% gains based on sector momentum
+
+**Key Indicators to Watch:**
+- Volume (40% above average is bullish)
+- VIX levels (sub-20 is favorable)
+- Sector rotation into tech
+
+Would you like me to create a specific trading strategy based on this analysis?`;
+                
+                addMessage('assistant', analysis);
+                analyzeBtn.textContent = '🤖 Analyze with Claude AI';
+                analyzeBtn.disabled = false;
+                hideTypingIndicator();
+            }, 3000);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage('user', message);
+            input.value = '';
+            
+            showTypingIndicator();
+            
+            // Simulate Claude response
+            setTimeout(() => {
+                let response = generateClaudeResponse(message);
+                addMessage('assistant', response);
+                hideTypingIndicator();
+                
+                // Show strategy preview for certain keywords
+                if (message.toLowerCase().includes('create') || message.toLowerCase().includes('strategy')) {
+                    document.getElementById('strategyPreview').classList.add('active');
+                }
+            }, 1500);
+        }
+
+        function addMessage(sender, text) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            chatHistory.push({ sender, text });
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('active');
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('active');
+        }
+
+        function generateClaudeResponse(message) {
+            const responses = {
+                'create': 'I\'ll create a momentum trading strategy based on the tech sector analysis. The strategy will focus on AI and cloud computing stocks with strong volume confirmation. Ready to proceed?',
+                'parameters': 'For this strategy, I recommend: Entry on breakout + volume spike, 5% stop loss, 15-20% profit target, daily timeframe, and position sizing at 2% of portfolio per trade.',
+                'risk': 'The risk level is medium due to sector concentration, but the declining VIX and strong fundamentals provide good support. I recommend position sizing at 2% per trade.',
+                'backtest': 'Great idea! I\'ll set up a backtest using the last 2 years of data. This will show how the strategy would have performed during different market conditions.',
+                'default': 'That\'s a great question! Based on the article analysis, I can help you refine the strategy parameters, adjust risk levels, or explain any technical indicators. What specific aspect would you like to explore?'
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return response;
+                }
+            }
+            return responses.default;
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function createStrategy() {
+            alert('Strategy creation started! Redirecting to backtest...');
+            // In real app, this would navigate to the backtest page
+        }
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    </script>
+</body>
+</html>

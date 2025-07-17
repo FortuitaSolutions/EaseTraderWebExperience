@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseTrader - Subscription & Pricing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --surface-secondary: #f8fafc;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --border: #e5e7eb;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --surface: #1f2937;
+            --surface-secondary: #111827;
+            --text: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-light: #9ca3af;
+            --border: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-secondary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 3rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Billing Toggle */
+        .billing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .billing-switch {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.25rem;
+            display: flex;
+            box-shadow: var(--shadow);
+        }
+
+        .billing-option {
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .billing-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .billing-option:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .savings-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Pricing Grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pricing-card.enterprise {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pricing-card.enterprise .card-title,
+        .pricing-card.enterprise .card-description {
+            color: white;
+        }
+
+        .card-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1rem;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .pricing-card.enterprise .card-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card.enterprise .card-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .price-display {
+            margin-bottom: 2rem;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .pricing-card.enterprise .price-amount {
+            color: white;
+        }
+
+        .price-period {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .pricing-card.enterprise .price-period {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .price-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .pricing-card.enterprise .price-note {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .features-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.premium {
+            background: var(--warning);
+        }
+
+        .feature-icon.enterprise {
+            background: var(--secondary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--surface-secondary);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-enterprise {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-enterprise:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Add-ons Section */
+        .addons-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .addons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .addon-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .addon-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .addon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .addon-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .addon-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .addon-price {
+            text-align: right;
+        }
+
+        .addon-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .addon-period {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .addon-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .addon-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .addon-features .feature-icon {
+            width: 1rem;
+            height: 1rem;
+            font-size: 0.7rem;
+        }
+
+        /* Volume Discounts */
+        .volume-section {
+            background: var(--surface);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border);
+        }
+
+        .volume-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .volume-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .volume-tier {
+            background: var(--surface-secondary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .volume-tier.highlighted {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .volume-strategies {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .volume-discount {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .volume-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .volume-tier.highlighted .volume-price {
+            color: white;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 4rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 1.5rem;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            background: white;
+            color: var(--primary);
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-cta-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .price-amount {
+                font-size: 2.5rem;
+            }
+
+            .addons-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .volume-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-cta {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main {
+                padding-bottom: 6rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">EaseTrader</a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Strategies</a></li>
+                        <li><a href="#">Backtests</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#" class="active">Pricing</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header fade-in">
+                <h1 class="page-title">Choose Your Trading Plan</h1>
+                <p class="page-subtitle">
+                    Start free, scale as you grow. Build unlimited strategies with our AI-powered platform.
+                </p>
+            </div>
+
+            <!-- Billing Toggle -->
+            <div class="billing-toggle fade-in">
+                <div class="billing-switch">
+                    <div class="billing-option active" onclick="toggleBilling('monthly')">
+                        Monthly
+                    </div>
+                    <div class="billing-option" onclick="toggleBilling('yearly')">
+                        Yearly
+                        <span class="savings-badge">Save 20%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Pricing Plans -->
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">Starter</h3>
+                    <p class="card-description">Perfect for beginners exploring AI trading</p>
+                    <div class="price-display">
+                        <span class="price-amount">$0</span>
+                        <span class="price-period">forever</span>
+                        <p class="price-note">No credit card required</p>
+                    </div>
+                    <ul class="features-list">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>3 AI strategy generations</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Basic backtesting (1 year data)</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>5 data sources</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Community support</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Mobile app access</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary">Get Started Free</button>
+                </div>
+
+                <div class="pricing-card popular fade-in">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">Pro</h3>
+                    <p class="card-description">Most popular for active traders</p>
+                    <div class="price-display">
+                        <span class="price-amount monthly-price">$19</span>
+                        <span class="price-amount yearly-price" style="display: none;">$15</span>
+                        <span class="price-period">/month</span>
+                        <p class="price-note yearly-note" style="display: none;">Billed annually ($180/year)</p>
+                    </div>
+                    <ul class="features-list">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Unlimited AI strategies</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Advanced backtesting (10 years)</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>All data sources</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Real-time notifications</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Priority support</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Advanced analytics</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary pulse">Start Pro Trial</button>
+                </div>
+
+                <div class="pricing-card fade-in">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">Business</h3>
+                    <p class="card-description">For teams and serious traders</p>
+                    <div class="price-display">
+                        <span class="price-amount monthly-price">$49</span>
+                        <span class="price-amount yearly-price" style="display: none;">$39</span>
+                        <span class="price-period">/month</span>
+                        <p class="price-note yearly-note" style="display: none;">Billed annually ($468/year)</p>
+                    </div>
+                    <ul class="features-list">
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>Everything in Pro</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>Team collaboration (5 users)</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>API access</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>White-label options</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>Custom integrations</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon premium">✓</span>
+                            <span>Dedicated account manager</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary">Choose Business</button>
+                </div>
+
+                <div class="pricing-card enterprise fade-in">
+                    <div class="card-icon">🏢</div>
+                    <h3 class="card-title">Enterprise</h3>
+                    <p class="card-description">Custom solutions for large organizations</p>
+                    <div class="price-display">
+                        <span class="price-amount">Custom</span>
+                        <p class="price-note">Contact us for pricing</p>
+                    </div>
+                    <ul class="features-list">
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>Everything in Business</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>Unlimited users</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>On-premise deployment</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>Custom AI models</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>SLA & compliance</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon enterprise">✓</span>
+                            <span>24/7 premium support</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-enterprise">Contact Sales</button>
+                </div>
+            </div>
+
+            <!-- Add-ons Section -->
+            <div class="addons-section fade-in">
+                <h2 class="section-title">Power-ups & Add-ons</h2>
+                <p class="section-subtitle">Enhance your trading experience with these premium features</p>
+                
+                <div class="addons-grid">
+                    <div class="addon-card">
+                        <div class="addon-header">
+                            <div class="addon-info">
+                                <h3>📱 SMS Notifications</h3>
+                                <p>Get instant alerts via SMS for critical trading signals</p>
+                            </div>
+                            <div class="addon-price">
+                                <div class="addon-amount">$3</div>
+                                <div class="addon-period">per month</div>
+                            </div>
+                        </div>
+                        <ul class="addon-features">
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Real-time SMS alerts</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Custom trigger conditions</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Worldwide delivery</span>
+                            </li>
+                        </ul>
+                        <button class="btn btn-secondary">Add to Plan</button>
+                    </div>
+
+                    <div class="addon-card">
+                        <div class="addon-header">
+                            <div class="addon-info">
+                                <h3>🔥 Per-Strategy Notifications</h3>
+                                <p>Individual notification streams for each strategy</p>
+                            </div>
+                            <div class="addon-price">
+                                <div class="addon-amount">$1</div>
+                                <div class="addon-period">per strategy/month</div>
+                            </div>
+                        </div>
+                        <ul class="addon-features">
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Dedicated notification channel</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Performance alerts</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Custom webhooks</span>
+                            </li>
+                        </ul>
+                        <button class="btn btn-secondary">Add to Plan</button>
+                    </div>
+
+                    <div class="addon-card">
+                        <div class="addon-header">
+                            <div class="addon-info">
+                                <h3>🤖 AI Strategy Builder Pro</h3>
+                                <p>Advanced AI features and priority processing</p>
+                            </div>
+                            <div class="addon-price">
+                                <div class="addon-amount">$9</div>
+                                <div class="addon-period">per month</div>
+                            </div>
+                        </div>
+                        <ul class="addon-features">
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>GPT-4 strategy generation</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Priority processing queue</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Advanced market analysis</span>
+                            </li>
+                        </ul>
+                        <button class="btn btn-secondary">Add to Plan</button>
+                    </div>
+
+                    <div class="addon-card">
+                        <div class="addon-header">
+                            <div class="addon-info">
+                                <h3>📊 Premium Data Sources</h3>
+                                <p>Access to exclusive financial data feeds</p>
+                            </div>
+                            <div class="addon-price">
+                                <div class="addon-amount">$15</div>
+                                <div class="addon-period">per month</div>
+                            </div>
+                        </div>
+                        <ul class="addon-features">
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Level 2 market data</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Options flow data</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Institutional sentiment</span>
+                            </li>
+                        </ul>
+                        <button class="btn btn-secondary">Add to Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume Discounts -->
+            <div class="volume-section fade-in">
+                <div class="volume-header">
+                    <h2 class="section-title">Volume Discounts</h2>
+                    <p class="section-subtitle">Save more with bulk strategy notifications</p>
+                </div>
+                
+                <div class="volume-grid">
+                    <div class="volume-tier">
+                        <div class="volume-strategies">10-25</div>
+                        <div>strategies</div>
+                        <div class="volume-discount">5% off</div>
+                        <div class="volume-price">$0.95 per strategy</div>
+                    </div>
+                    
+                    <div class="volume-tier highlighted">
+                        <div class="volume-strategies">26-50</div>
+                        <div>strategies</div>
+                        <div class="volume-discount">15% off</div>
+                        <div class="volume-price">$0.85 per strategy</div>
+                    </div>
+                    
+                    <div class="volume-tier">
+                        <div class="volume-strategies">51-100</div>
+                        <div>strategies</div>
+                        <div class="volume-discount">25% off</div>
+                        <div class="volume-price">$0.75 per strategy</div>
+                    </div>
+                    
+                    <div class="volume-tier">
+                        <div class="volume-strategies">100+</div>
+                        <div>strategies</div>
+                        <div class="volume-discount">35% off</div>
+                        <div class="volume-price">$0.65 per strategy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section fade-in">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question">Can I change plans anytime?</div>
+                        <div class="faq-answer">Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate the billing accordingly.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">What's included in the free trial?</div>
+                        <div class="faq-answer">The free trial includes full access to Pro features for 14 days, including unlimited AI strategies, advanced backtesting, and all data sources.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">How do per-strategy notifications work?</div>
+                        <div class="faq-answer">Each strategy can have its own notification channel with custom alerts. You pay $1/month per strategy that has notifications enabled.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">Are there any hidden fees?</div>
+                        <div class="faq-answer">No hidden fees! Our pricing is transparent. You only pay for the plan and any add-ons you choose. Data usage is unlimited on all paid plans.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">Can I use my own data sources?</div>
+                        <div class="faq-answer">Yes! Business and Enterprise plans include API access to connect your own data sources and custom integrations.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">What payment methods do you accept?</div>
+                        <div class="faq-answer">We accept all major credit cards, PayPal, and bank transfers for Enterprise customers. All payments are secure and encrypted.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section fade-in">
+                <h2 class="cta-title">Ready to Start Trading Smarter?</h2>
+                <p class="cta-subtitle">Join thousands of traders who've transformed their strategies with AI</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn-cta">Start Free Trial</a>
+                    <a href="#" class="btn-cta-secondary">Talk to Sales</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div>Dashboard</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📊</div>
+                <div>Strategies</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚡</div>
+                <div>Backtests</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📈</div>
+                <div>Analytics</div>
+            </a>
+            <a href="#" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">💳</div>
+                <div>Pricing</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let isYearlyBilling = false;
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleBilling(period) {
+            isYearlyBilling = period === 'yearly';
+            
+            // Update toggle buttons
+            document.querySelectorAll('.billing-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update pricing display
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const yearlyPrices = document.querySelectorAll('.yearly-price');
+            const yearlyNotes = document.querySelectorAll('.yearly-note');
+            
+            if (isYearlyBilling) {
+                monthlyPrices.forEach(price => price.style.display = 'none');
+                yearlyPrices.forEach(price => price.style.display = 'inline');
+                yearlyNotes.forEach(note => note.style.display = 'block');
+            } else {
+                monthlyPrices.forEach(price => price.style.display = 'inline');
+                yearlyPrices.forEach(price => price.style.display = 'none');
+                yearlyNotes.forEach(note => note.style.display = 'none');
+            }
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add some interactive behavior
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Simulate add-on selection
+        document.querySelectorAll('.addon-card .btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent === 'Add to Plan') {
+                    this.textContent = 'Added ✓';
+                    this.style.background = 'var(--success)';
+                    this.style.color = 'white';
+                } else if (this.textContent === 'Added ✓') {
+                    this.textContent = 'Add to Plan';
+                    this.style.background = '';
+                    this.style.color = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

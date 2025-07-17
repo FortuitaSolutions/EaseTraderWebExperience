@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseTrader - Data Features</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --surface-secondary: #f8fafc;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --surface: #1f2937;
+            --surface-secondary: #111827;
+            --text: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-secondary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .search-input {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-field {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* Data Source Grid */
+        .data-sources {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .source-card {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .source-info {
+            flex: 1;
+        }
+
+        .source-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .source-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .source-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background: var(--success);
+        }
+
+        .status-dot.inactive {
+            background: var(--error);
+        }
+
+        .source-logo {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .source-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .source-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--surface-secondary);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Featured Data Grid */
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-source {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-checkbox {
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 0.25rem;
+            position: relative;
+            background: var(--surface);
+            cursor: pointer;
+        }
+
+        .feature-checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .feature-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-frequency {
+            background: var(--surface-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .mini-chart {
+            width: 100%;
+            height: 40px;
+            background: var(--surface-secondary);
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Selection Summary */
+        .selection-summary {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .selection-summary.active {
+            transform: translateY(0);
+        }
+
+        .summary-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .summary-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-count {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .sources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .source-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .summary-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main {
+                padding-bottom: 6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">EaseTrader</a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Strategies</a></li>
+                        <li><a href="#">Backtests</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#" class="active">Data</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                    <div class="user-profile">
+                        <div class="avatar">JD</div>
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Data Features</h1>
+                <p class="page-subtitle">Discover and select financial data sources for your strategies</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="search-section">
+                <div class="search-header">
+                    <h2 class="search-title">Find Data Features</h2>
+                </div>
+                
+                <div class="search-input">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="search-field" placeholder="Search for indicators, ratios, economic data..." id="searchInput">
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label class="filter-label">Data Source</label>
+                        <select class="filter-select" id="sourceFilter">
+                            <option value="all">All Sources</option>
+                            <option value="fmp">FMP</option>
+                            <option value="fred">FRED</option>
+                            <option value="cboe">CBOE</option>
+                            <option value="yahoo">Yahoo Finance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Category</label>
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="fundamentals">Fundamentals</option>
+                            <option value="technical">Technical</option>
+                            <option value="economic">Economic</option>
+                            <option value="sentiment">Sentiment</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Frequency</label>
+                        <select class="filter-select" id="frequencyFilter">
+                            <option value="all">All Frequencies</option>
+                            <option value="real-time">Real-time</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Sources Overview -->
+            <div class="data-sources">
+                <h2 class="section-title">Data Sources</h2>
+                <div class="sources-grid">
+                    <div class="source-card">
+                        <div class="source-header">
+                            <div class="source-info">
+                                <h3 class="source-name">Financial Modeling Prep</h3>
+                                <p class="source-description">Comprehensive financial data and fundamentals</p>
+                                <div class="source-status">
+                                    <div class="status-dot active"></div>
+                                    <span>Active</span>
+                                </div>
+                            </div>
+                            <div class="source-logo">FMP</div>
+                        </div>
+                        <div class="source-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">1,247</div>
+                                <div class="stat-label">Features</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">Real-time</div>
+                                <div class="stat-label">Updates</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">99.9%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="btn btn-primary">Explore</button>
+                            <button class="btn btn-secondary">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="source-card">
+                        <div class="source-header">
+                            <div class="source-info">
+                                <h3 class="source-name">FRED Economic Data</h3>
+                                <p class="source-description">Federal Reserve economic indicators</p>
+                                <div class="source-status">
+                                    <div class="status-dot active"></div>
+                                    <span>Active</span>
+                                </div>
+                            </div>
+                            <div class="source-logo" style="background: var(--success);">FRED</div>
+                        </div>
+                        <div class="source-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">892</div>
+                                <div class="stat-label">Features</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">Daily</div>
+                                <div class="stat-label">Updates</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">100%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="btn btn-primary">Explore</button>
+                            <button class="btn btn-secondary">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="source-card">
+                        <div class="source-header">
+                            <div class="source-info">
+                                <h3 class="source-name">CBOE Options Data</h3>
+                                <p class="source-description">Volatility and options market data</p>
+                                <div class="source-status">
+                                    <div class="status-dot active"></div>
+                                    <span>Active</span>
+                                </div>
+                            </div>
+                            <div class="source-logo" style="background: var(--warning);">CBOE</div>
+                        </div>
+                        <div class="source-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">156</div>
+                                <div class="stat-label">Features</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">Real-time</div>
+                                <div class="stat-label">Updates</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">99.7%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="btn btn-primary">Explore</button>
+                            <button class="btn btn-secondary">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="source-card">
+                        <div class="source-header">
+                            <div class="source-info">
+                                <h3 class="source-name">Yahoo Finance</h3>
+                                <p class="source-description">Market data and price information</p>
+                                <div class="source-status">
+                                    <div class="status-dot active"></div>
+                                    <span>Active</span>
+                                </div>
+                            </div>
+                            <div class="source-logo" style="background: var(--secondary);">YF</div>
+                        </div>
+                        <div class="source-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">634</div>
+                                <div class="stat-label">Features</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">Real-time</div>
+                                <div class="stat-label">Updates</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">99.8%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="btn btn-primary">Explore</button>
+                            <button class="btn btn-secondary">Configure</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Data -->
+            <div class="featured-data">
+                <h2 class="section-title">Featured Data Features</h2>
+                <div class="featured-grid">
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">S&P 500 PE Ratio</h4>
+                                <p class="feature-source">FMP</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📈 Chart Preview</div>
+                        <p class="feature-description">Price-to-earnings ratio for S&P 500 index</p>
+                        <div class="feature-meta">
+                            <span>Updated: 2 hours ago</span>
+                            <span class="feature-frequency">Daily</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">VIX Fear Index</h4>
+                                <p class="feature-source">CBOE</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📊 Chart Preview</div>
+                        <p class="feature-description">Market volatility and fear indicator</p>
+                        <div class="feature-meta">
+                            <span>Updated: 15 mins ago</span>
+                            <span class="feature-frequency">Real-time</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">Federal Funds Rate</h4>
+                                <p class="feature-source">FRED</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📉 Chart Preview</div>
+                        <p class="feature-description">US Federal Reserve interest rates</p>
+                        <div class="feature-meta">
+                            <span>Updated: 1 day ago</span>
+                            <span class="feature-frequency">Monthly</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">GDP Growth Rate</h4>
+                                <p class="feature-source">FRED</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📈 Chart Preview</div>
+                        <p class="feature-description">US Gross Domestic Product growth</p>
+                        <div class="feature-meta">
+                            <span>Updated: 3 days ago</span>
+                            <span class="feature-frequency">Quarterly</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">Treasury Yield Curve</h4>
+                                <p class="feature-source">FRED</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📊 Chart Preview</div>
+                        <p class="feature-description">US Treasury bond yield curve</p>
+                        <div class="feature-meta">
+                            <span>Updated: 4 hours ago</span>
+                            <span class="feature-frequency">Daily</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">NASDAQ 100 Volume</h4>
+                                <p class="feature-source">Yahoo Finance</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📈 Chart Preview</div>
+                        <p class="feature-description">Trading volume for NASDAQ 100</p>
+                        <div class="feature-meta">
+                            <span>Updated: 1 hour ago</span>
+                            <span class="feature-frequency">Real-time</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">Unemployment Rate</h4>
+                                <p class="feature-source">FRED</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📉 Chart Preview</div>
+                        <p class="feature-description">US unemployment rate statistics</p>
+                        <div class="feature-meta">
+                            <span>Updated: 1 week ago</span>
+                            <span class="feature-frequency">Monthly</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="toggleFeature(this)">
+                        <div class="feature-header">
+                            <div>
+                                <h4 class="feature-name">Consumer Price Index</h4>
+                                <p class="feature-source">FRED</p>
+                            </div>
+                            <div class="feature-checkbox"></div>
+                        </div>
+                        <div class="mini-chart">📊 Chart Preview</div>
+                        <p class="feature-description">Inflation indicator and price levels</p>
+                        <div class="feature-meta">
+                            <span>Updated: 5 days ago</span>
+                            <span class="feature-frequency">Monthly</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Selection Summary -->
+    <div class="selection-summary" id="selectionSummary">
+        <div class="summary-content">
+            <div class="summary-info">
+                <span class="summary-count" id="selectionCount">0 features selected</span>
+                <span>Ready to use in your strategies</span>
+            </div>
+            <div class="summary-actions">
+                <button class="btn btn-secondary" onclick="clearSelection()">Clear</button>
+                <button class="btn btn-primary" onclick="useSelectedFeatures()">Use Selected Features</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div>Dashboard</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📊</div>
+                <div>Strategies</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚡</div>
+                <div>Backtests</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📈</div>
+                <div>Analytics</div>
+            </a>
+            <a href="#" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">📋</div>
+                <div>Data</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let selectedFeatures = [];
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleFeature(card) {
+            const checkbox = card.querySelector('.feature-checkbox');
+            const isSelected = checkbox.classList.contains('checked');
+            
+            if (isSelected) {
+                checkbox.classList.remove('checked');
+                card.classList.remove('selected');
+                // Remove from selectedFeatures array
+                const featureName = card.querySelector('.feature-name').textContent;
+                selectedFeatures = selectedFeatures.filter(f => f !== featureName);
+            } else {
+                checkbox.classList.add('checked');
+                card.classList.add('selected');
+                // Add to selectedFeatures array
+                const featureName = card.querySelector('.feature-name').textContent;
+                selectedFeatures.push(featureName);
+            }
+            
+            updateSelectionSummary();
+        }
+
+        function updateSelectionSummary() {
+            const summary = document.getElementById('selectionSummary');
+            const count = document.getElementById('selectionCount');
+            
+            if (selectedFeatures.length > 0) {
+                summary.classList.add('active');
+                count.textContent = `${selectedFeatures.length} feature${selectedFeatures.length !== 1 ? 's' : ''} selected`;
+            } else {
+                summary.classList.remove('active');
+            }
+        }
+
+        function clearSelection() {
+            selectedFeatures = [];
+            
+            // Clear all checkboxes
+            const checkboxes = document.querySelectorAll('.feature-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.classList.remove('checked');
+                checkbox.closest('.feature-card').classList.remove('selected');
+            });
+            
+            updateSelectionSummary();
+        }
+
+        function useSelectedFeatures() {
+            if (selectedFeatures.length === 0) {
+                alert('Please select at least one feature');
+                return;
+            }
+            
+            alert(`Selected features: ${selectedFeatures.join(', ')}\n\nRedirecting to Strategy Builder...`);
+            // In real app, this would navigate to strategy builder with selected features
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            featureCards.forEach(card => {
+                const name = card.querySelector('.feature-name').textContent.toLowerCase();
+                const description = card.querySelector('.feature-description').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        document.getElementById('sourceFilter').addEventListener('change', function(e) {
+            const selectedSource = e.target.value;
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            featureCards.forEach(card => {
+                const source = card.querySelector('.feature-source').textContent.toLowerCase();
+                
+                if (selectedSource === 'all' || source.includes(selectedSource)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

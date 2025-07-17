@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseTrader - Backtesting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --surface-secondary: #f8fafc;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --surface: #1f2937;
+            --surface-secondary: #111827;
+            --text: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-secondary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Backtest Layout */
+        .backtest-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Strategy Configuration */
+        .config-section {
+            margin-bottom: 2rem;
+        }
+
+        .config-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .config-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .config-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .date-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .run-backtest-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .run-backtest-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .run-backtest-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Progress Tracker */
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--surface-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .progress-percentage {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .phase-indicators {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .phase-indicator {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 0.5rem;
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .phase-indicator.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .phase-indicator.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .results-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .results-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .results-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Performance Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value.positive {
+            color: var(--success);
+        }
+
+        .metric-value.negative {
+            color: var(--error);
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Chart Placeholder */
+        .chart-container {
+            height: 400px;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Trades Table */
+        .trades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .trades-table th,
+        .trades-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trades-table th {
+            background: var(--surface-secondary);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .trades-table tr:hover {
+            background: var(--surface-secondary);
+        }
+
+        .trade-profit {
+            font-weight: 600;
+        }
+
+        .trade-profit.positive {
+            color: var(--success);
+        }
+
+        .trade-profit.negative {
+            color: var(--error);
+        }
+
+        .trade-type {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .trade-type.buy {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .trade-type.sell {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .backtest-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .results-tabs {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .results-tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 0.5rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .date-range {
+                grid-template-columns: 1fr;
+            }
+
+            .phase-indicators {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .trades-table {
+                font-size: 0.9rem;
+            }
+
+            .trades-table th,
+            .trades-table td {
+                padding: 0.5rem;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main {
+                padding-bottom: 6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">EaseTrader</a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Strategies</a></li>
+                        <li><a href="#" class="active">Backtests</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#">Data</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                    <div class="user-profile">
+                        <div class="avatar">JD</div>
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Strategy Backtesting</h1>
+                <p class="page-subtitle">Test your trading strategies with historical data</p>
+            </div>
+
+            <div class="backtest-layout">
+                <!-- Configuration Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Backtest Configuration</h2>
+                    </div>
+
+                    <div class="config-section">
+                        <div class="config-group">
+                            <label class="config-label">Strategy</label>
+                            <select class="config-select" id="strategySelect">
+                                <option value="ai_momentum">AI Momentum Strategy</option>
+                                <option value="mean_reversion">Mean Reversion Bot</option>
+                                <option value="volatility_arbitrage">Volatility Arbitrage</option>
+                                <option value="sector_rotation">Sector Rotation</option>
+                            </select>
+                        </div>
+
+                        <div class="config-group">
+                            <label class="config-label">Initial Capital</label>
+                            <input type="number" class="config-input" value="100000" id="initialCapital">
+                        </div>
+
+                        <div class="config-group">
+                            <label class="config-label">Date Range</label>
+                            <div class="date-range">
+                                <input type="date" class="config-input" value="2022-01-01" id="startDate">
+                                <input type="date" class="config-input" value="2024-12-31" id="endDate">
+                            </div>
+                        </div>
+
+                        <div class="config-group">
+                            <label class="config-label">Commission per Trade</label>
+                            <input type="number" class="config-input" value="0.001" step="0.001" id="commission">
+                        </div>
+
+                        <div class="config-group">
+                            <label class="config-label">Benchmark</label>
+                            <select class="config-select" id="benchmark">
+                                <option value="SPY">S&P 500 (SPY)</option>
+                                <option value="QQQ">NASDAQ 100 (QQQ)</option>
+                                <option value="DIA">Dow Jones (DIA)</option>
+                                <option value="IWM">Russell 2000 (IWM)</option>
+                            </select>
+                        </div>
+
+                        <button class="run-backtest-btn" id="runBacktestBtn" onclick="runBacktest()">
+                            🚀 Run Backtest
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress & Results Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Backtest Progress</h2>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div class="progress-section" id="progressSection">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-text" id="progressText">Ready to start backtest</span>
+                            <span class="progress-percentage" id="progressPercentage">0%</span>
+                        </div>
+                        <div class="phase-indicators">
+                            <div class="phase-indicator" id="phase1">Data Loading</div>
+                            <div class="phase-indicator" id="phase2">Signal Generation</div>
+                            <div class="phase-indicator" id="phase3">Trade Execution</div>
+                            <div class="phase-indicator" id="phase4">Analysis</div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="results-section" id="resultsSection">
+                        <div class="results-tabs">
+                            <div class="results-tab active" onclick="showTab('performance')">Performance</div>
+                            <div class="results-tab" onclick="showTab('trades')">Trades</div>
+                            <div class="results-tab" onclick="showTab('analysis')">AI Analysis</div>
+                        </div>
+
+                        <div class="tab-content active" id="performance">
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-value positive">+18.7%</div>
+                                    <div class="metric-label">Total Return</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value positive">1.67</div>
+                                    <div class="metric-label">Sharpe Ratio</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value negative">-8.2%</div>
+                                    <div class="metric-label">Max Drawdown</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value positive">89.3%</div>
+                                    <div class="metric-label">Win Rate</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value positive">2.1</div>
+                                    <div class="metric-label">Profit Factor</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value">347</div>
+                                    <div class="metric-label">Total Trades</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                📈 Equity Curve Chart Would Display Here
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="trades">
+                            <table class="trades-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Symbol</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>P&L</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2024-01-15</td>
+                                        <td>AAPL</td>
+                                        <td><span class="trade-type buy">BUY</span></td>
+                                        <td>100</td>
+                                        <td>$185.42</td>
+                                        <td><span class="trade-profit positive">+$1,247</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024-01-18</td>
+                                        <td>AAPL</td>
+                                        <td><span class="trade-type sell">SELL</span></td>
+                                        <td>100</td>
+                                        <td>$197.89</td>
+                                        <td><span class="trade-profit positive">+$1,247</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024-01-22</td>
+                                        <td>MSFT</td>
+                                        <td><span class="trade-type buy">BUY</span></td>
+                                        <td>50</td>
+                                        <td>$412.33</td>
+                                        <td><span class="trade-profit positive">+$892</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024-01-25</td>
+                                        <td>MSFT</td>
+                                        <td><span class="trade-type sell">SELL</span></td>
+                                        <td>50</td>
+                                        <td>$430.17</td>
+                                        <td><span class="trade-profit positive">+$892</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024-01-29</td>
+                                        <td>GOOGL</td>
+                                        <td><span class="trade-type buy">BUY</span></td>
+                                        <td>25</td>
+                                        <td>$145.78</td>
+                                        <td><span class="trade-profit negative">-$156</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tab-content" id="analysis">
+                            <div class="card" style="margin: 0;">
+                                <h3 style="margin-bottom: 1rem;">🤖 AI Performance Analysis</h3>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong>Strategy Performance:</strong> The AI Momentum Strategy showed strong performance with an 18.7% return, significantly outperforming the S&P 500 benchmark by 12.3%. The high Sharpe ratio of 1.67 indicates excellent risk-adjusted returns.
+                                </p>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong>Key Insights:</strong>
+                                </p>
+                                <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                                    <li>The strategy excelled during trending markets, particularly in technology stocks</li>
+                                    <li>Maximum drawdown of -8.2% was well-controlled and within acceptable risk parameters</li>
+                                    <li>Win rate of 89.3% demonstrates the effectiveness of AI-driven entry signals</li>
+                                    <li>The profit factor of 2.1 shows profitable trades outweigh losses by more than 2:1</li>
+                                </ul>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong>Recommendations:</strong>
+                                </p>
+                                <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                                    <li>Consider increasing position sizes during strong trending periods</li>
+                                    <li>Implement volatility-based position sizing for better risk management</li>
+                                    <li>Add sector rotation filters to avoid concentration risk</li>
+                                    <li>Monitor correlation with market volatility (VIX) for risk adjustment</li>
+                                </ul>
+                                <p>
+                                    <strong>Risk Assessment:</strong> The strategy shows low correlation with market downturns and maintains stable performance across different market conditions. Consider implementing during favorable market environments.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div>Dashboard</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📊</div>
+                <div>Strategies</div>
+            </a>
+            <a href="#" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">⚡</div>
+                <div>Backtests</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📈</div>
+                <div>Analytics</div>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <div class="mobile-nav-icon">👤</div>
+                <div>Profile</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let currentTab = 'performance';
+        let backtestRunning = false;
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function runBacktest() {
+            if (backtestRunning) return;
+            
+            backtestRunning = true;
+            const runBtn = document.getElementById('runBacktestBtn');
+            const progressSection = document.getElementById('progressSection');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            runBtn.textContent = 'Running Backtest...';
+            runBtn.disabled = true;
+            
+            // Hide results
+            resultsSection.classList.remove('active');
+            
+            // Run backtest phases
+            runBacktestPhases();
+        }
+
+        function runBacktestPhases() {
+            const phases = [
+                { id: 'phase1', text: 'Loading historical data...', duration: 2000 },
+                { id: 'phase2', text: 'Generating trading signals...', duration: 3000 },
+                { id: 'phase3', text: 'Executing trades...', duration: 2500 },
+                { id: 'phase4', text: 'Analyzing results...', duration: 1500 }
+            ];
+            
+            let currentPhase = 0;
+            
+            function nextPhase() {
+                if (currentPhase > 0) {
+                    // Mark previous phase as completed
+                    document.getElementById(phases[currentPhase - 1].id).classList.add('completed');
+                    document.getElementById(phases[currentPhase - 1].id).classList.remove('active');
+                }
+                
+                if (currentPhase < phases.length) {
+                    const phase = phases[currentPhase];
+                    
+                    // Mark current phase as active
+                    document.getElementById(phase.id).classList.add('active');
+                    
+                    // Update progress
+                    const progress = ((currentPhase + 1) / phases.length) * 100;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                    document.getElementById('progressText').textContent = phase.text;
+                    document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
+                    
+                    currentPhase++;
+                    setTimeout(nextPhase, phase.duration);
+                } else {
+                    // Backtest complete
+                    completeBacktest();
+                }
+            }
+            
+            nextPhase();
+        }
+
+        function completeBacktest() {
+            backtestRunning = false;
+            
+            // Update UI
+            const runBtn = document.getElementById('runBacktestBtn');
+            runBtn.textContent = '🚀 Run Backtest';
+            runBtn.disabled = false;
+            
+            document.getElementById('progressText').textContent = 'Backtest completed successfully!';
+            document.getElementById('progressPercentage').textContent = '100%';
+            
+            // Show results
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // Reset phases
+            setTimeout(() => {
+                const phases = document.querySelectorAll('.phase-indicator');
+                phases.forEach(phase => {
+                    phase.classList.remove('active', 'completed');
+                });
+                
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('progressText').textContent = 'Ready to start backtest';
+                document.getElementById('progressPercentage').textContent = '0%';
+            }, 3000);
+        }
+
+        function showTab(tabName) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.results-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // Initialize with sample data showing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show results by default for demo
+            document.getElementById('resultsSection').classList.add('active');
+        });
+    </script>
+</body>
+</html>
