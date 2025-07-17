@@ -555,19 +555,46 @@
                 display: none;
             }
 
+            /* Mobile Typography */
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            /* Mobile Layout */
             .profile-layout {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .sidebar {
                 position: static;
-                margin-bottom: 2rem;
+                margin-bottom: 1rem;
+                background: var(--surface);
+                border-radius: 0.5rem;
+                padding: 1rem;
             }
 
             .sidebar-nav {
                 display: flex;
                 overflow-x: auto;
                 gap: 0.5rem;
+                padding-bottom: 0.5rem;
             }
 
             .sidebar-nav li {
@@ -575,20 +602,107 @@
                 min-width: max-content;
             }
 
+            .sidebar-nav a {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+
+            /* Mobile Forms */
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
+            .form-group label {
+                font-size: 0.9rem;
+            }
+
+            .form-input,
+            .form-select,
+            .form-textarea {
+                padding: 0.75rem;
+                font-size: 1rem;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            .btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            /* Mobile Cards */
+            .card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            /* Mobile Subscription */
             .subscription-details {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
+            .plan-card {
+                padding: 1rem;
+            }
+
+            .plan-title {
+                font-size: 1.1rem;
+            }
+
+            .plan-price {
+                font-size: 1.5rem;
+            }
+
+            /* Mobile Settings */
+            .settings-section {
+                margin-bottom: 1.5rem;
+            }
+
+            .switch {
+                transform: scale(1.2); /* Larger touch target */
+            }
+
+            /* Mobile Navigation */
             .mobile-nav {
                 display: block;
             }
 
             .main {
-                padding-bottom: 6rem;
+                padding: 1rem 0 6rem;
+            }
+
+            /* Mobile Header Adjustments */
+            .header {
+                padding: 0.75rem 0;
+            }
+
+            .header-actions {
+                gap: 0.5rem;
+            }
+
+            .header-actions .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
             }
         }
     </style>
