@@ -202,15 +202,21 @@ function executePageScripts(pageName) {
     
     // Handle any "Get Started" or "Sign In" buttons on landing page
     if (pageName === 'landing') {
-        const getStartedBtns = document.querySelectorAll('a[href*="auth"], button:contains("Started"), button:contains("Sign")');
-        getStartedBtns.forEach(btn => {
-            if (btn.tagName === 'A') {
-                btn.href = '#auth';
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    loadPage('auth');
-                };
-            } else if (btn.tagName === 'BUTTON') {
+        // Find links with "auth" in href
+        const authLinks = document.querySelectorAll('a[href*="auth"]');
+        authLinks.forEach(btn => {
+            btn.href = '#auth';
+            btn.onclick = (e) => {
+                e.preventDefault();
+                loadPage('auth');
+            };
+        });
+        
+        // Find buttons with "Started" or "Sign" in text content
+        const allButtons = document.querySelectorAll('button');
+        allButtons.forEach(btn => {
+            const text = btn.textContent.toLowerCase();
+            if (text.includes('started') || text.includes('sign')) {
                 btn.onclick = () => loadPage('auth');
             }
         });
