@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPage(initialPage);
 });
 
-// Load page function - simplified approach
+// Load page function - simple direct approach
 async function loadPage(pageName, updateHistory = true) {
     try {
         // Get the HTML file name
@@ -55,21 +55,30 @@ async function loadPage(pageName, updateHistory = true) {
         const response = await fetch(fileName);
         const html = await response.text();
         
-        // Create iframe to load the page cleanly
-        const iframe = document.createElement('iframe');
-        iframe.style.width = '100%';
-        iframe.style.height = '100vh';
-        iframe.style.border = 'none';
-        iframe.style.paddingBottom = '80px'; // Space for mobile nav
+        // Extract and inject CSS styles
+        const styleMatches = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+        if (styleMatches) {
+            // Remove existing page styles
+            document.querySelectorAll('style[data-page]').forEach(style => style.remove());
+            
+            // Add new page styles
+            styleMatches.forEach(styleTag => {
+                const style = document.createElement('style');
+                style.setAttribute('data-page', pageName);
+                style.innerHTML = styleTag.replace(/<\/?style[^>]*>/gi, '');
+                document.head.appendChild(style);
+            });
+        }
+        
+        // Extract body content
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        let content = bodyMatch ? bodyMatch[1] : html;
+        
+        // Remove script tags to avoid conflicts
+        content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
         
         // Update the app container
-        document.getElementById('app').innerHTML = '';
-        document.getElementById('app').appendChild(iframe);
-        
-        // Load content into iframe
-        iframe.contentDocument.open();
-        iframe.contentDocument.write(html);
-        iframe.contentDocument.close();
+        document.getElementById('app').innerHTML = content;
         
         // Show mobile navigation for all pages except landing
         const bottomNav = document.getElementById('bottom-nav');
@@ -87,8 +96,8 @@ async function loadPage(pageName, updateHistory = true) {
         
         currentPage = pageName;
         
-        // Add mobile navigation to iframe content
-        addMobileNavToIframe(iframe, pageName);
+        // Fix navigation links on the loaded page
+        fixNavigationLinks();
         
     } catch (error) {
         console.error('Error loading page:', error);
@@ -102,51 +111,44 @@ async function loadPage(pageName, updateHistory = true) {
     }
 }
 
-// Add mobile navigation support to iframe content
-function addMobileNavToIframe(iframe, pageName) {
-    iframe.onload = function() {
-        try {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            // Add mobile viewport meta tag if not present
-            if (!doc.querySelector('meta[name="viewport"]')) {
-                const meta = doc.createElement('meta');
-                meta.name = 'viewport';
-                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-                doc.head.appendChild(meta);
-            }
-            
-            // Replace internal links with mobile navigation
-            const links = doc.querySelectorAll('a[href*=".html"]');
-            links.forEach(link => {
-                const href = link.getAttribute('href');
-                const page = Object.keys(pageMap).find(key => pageMap[key] === href);
-                if (page) {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.parent.loadPage(page);
-                    });
-                }
+// Fix navigation links on the loaded page
+function fixNavigationLinks() {
+    // Replace internal links with mobile navigation
+    const links = document.querySelectorAll('#app a[href*=".html"]');
+    links.forEach(link => {
+        const href = link.getAttribute('href');
+        const page = Object.keys(pageMap).find(key => pageMap[key] === href);
+        if (page) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadPage(page);
             });
-            
-            // Handle forms for auth page
-            if (pageName === 'auth') {
-                const forms = doc.querySelectorAll('form');
-                forms.forEach(form => {
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        // Mock authentication - just redirect to dashboard
-                        window.parent.isAuthenticated = true;
-                        window.parent.localStorage.setItem('easetrader_auth', 'true');
-                        window.parent.loadPage('dashboard');
-                    });
-                });
-            }
-            
-        } catch (error) {
-            console.warn('Could not modify iframe content:', error);
         }
-    };
+    });
+    
+    // Handle forms for auth page
+    const forms = document.querySelectorAll('#app form');
+    forms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Mock authentication - just redirect to dashboard
+            isAuthenticated = true;
+            localStorage.setItem('easetrader_auth', 'true');
+            loadPage('dashboard');
+        });
+    });
+    
+    // Handle "Get Started" and other navigation buttons
+    const buttons = document.querySelectorAll('#app button');
+    buttons.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        if (text.includes('get started') || text.includes('sign in') || text.includes('login')) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadPage('auth');
+            });
+        }
+    });
 }
 
 // Update active navigation button
