@@ -42,73 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPage(initialPage);
 });
 
-// Load page function - simple direct approach
-async function loadPage(pageName, updateHistory = true) {
-    try {
-        // Get the HTML file name
-        const fileName = pageMap[pageName] || pageMap['landing'];
-        
-        // Show loading state
-        document.getElementById('app').innerHTML = '<div class="loading-screen"><div class="spinner"></div><p>Loading...</p></div>';
-        
-        // Fetch the page content
-        const response = await fetch(fileName);
-        const html = await response.text();
-        
-        // Extract and inject CSS styles
-        const styleMatches = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
-        if (styleMatches) {
-            // Remove existing page styles
-            document.querySelectorAll('style[data-page]').forEach(style => style.remove());
-            
-            // Add new page styles
-            styleMatches.forEach(styleTag => {
-                const style = document.createElement('style');
-                style.setAttribute('data-page', pageName);
-                style.innerHTML = styleTag.replace(/<\/?style[^>]*>/gi, '');
-                document.head.appendChild(style);
-            });
-        }
-        
-        // Extract body content
-        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-        let content = bodyMatch ? bodyMatch[1] : html;
-        
-        // Remove script tags to avoid conflicts
-        content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-        
-        // Update the app container
-        document.getElementById('app').innerHTML = content;
-        
-        // Show mobile navigation for all pages except landing
-        const bottomNav = document.getElementById('bottom-nav');
-        if (pageName === 'landing') {
-            bottomNav.style.display = 'none';
-        } else {
-            bottomNav.style.display = 'flex';
-            updateActiveNavButton(pageName);
-        }
-        
-        // Update browser history
-        if (updateHistory) {
-            history.pushState({page: pageName}, '', `#${pageName}`);
-        }
-        
-        currentPage = pageName;
-        
-        // Fix navigation links on the loaded page
-        fixNavigationLinks();
-        
-    } catch (error) {
-        console.error('Error loading page:', error);
-        document.getElementById('app').innerHTML = `
-            <div style="padding: 20px; text-align: center;">
-                <h2>Error Loading Page</h2>
-                <p>Failed to load page: ${pageName}</p>
-                <button onclick="loadPage('landing')" style="padding: 10px 20px; background: #4A90E2; color: white; border: none; border-radius: 5px; cursor: pointer;">Go to Home</button>
-            </div>
-        `;
-    }
+// Load page function - simple redirect approach
+function loadPage(pageName, updateHistory = true) {
+    // Get the HTML file name
+    const fileName = pageMap[pageName] || pageMap['landing'];
+    
+    // Store the target page for mobile navigation
+    localStorage.setItem('easetrader_target_page', pageName);
+    
+    // Redirect directly to the HTML file
+    window.location.href = fileName;
 }
 
 // Fix navigation links on the loaded page
