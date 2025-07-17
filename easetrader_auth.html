@@ -721,6 +721,26 @@
 
     <script>
         let currentTab = 'login';
+        
+        // Navigation function for auth page
+        function navigateTo(pageName) {
+            const pageMap = {
+                'auth': 'easetrader_auth.html',
+                'landing': 'easetrader_landing.html',
+                'dashboard': 'easetrader_dashboard.html',
+                'analytics': 'easetrader_analytics.html',
+                'strategy_builder': 'easetrader_strategy_builder.html',
+                'backtesting': 'easetrader_backtesting.html',
+                'data_features': 'easetrader_data_features.html',
+                'profile': 'easetrader_profile.html',
+                'subscription': 'easetrader_subscription.html'
+            };
+            
+            const fileName = pageMap[pageName];
+            if (fileName) {
+                window.location.href = fileName;
+            }
+        }
 
         function toggleTheme() {
             const html = document.documentElement;
