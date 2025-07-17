@@ -704,7 +704,7 @@
     <header class="header" id="header">
         <div class="container">
             <div class="header-content">
-                <a href="#" class="logo">EaseTrader</a>
+                <a href="#" onclick="navigateTo('landing')" class="logo">EaseTrader</a>
                 
                 <nav>
                     <ul class="nav-links">
@@ -716,8 +716,8 @@
                 </nav>
 
                 <div class="header-actions">
-                    <a href="#" class="btn btn-secondary">Log In</a>
-                    <a href="#" class="btn btn-primary">Get Started</a>
+                    <a href="#" onclick="navigateTo('auth')" class="btn btn-secondary">Log In</a>
+                    <a href="#" onclick="navigateTo('auth')" class="btn btn-primary">Get Started</a>
                 </div>
             </div>
         </div>
@@ -735,8 +735,8 @@
                             No coding required – just paste an article and let AI build your strategy.
                         </p>
                         <div class="hero-cta">
-                            <a href="#" class="btn btn-primary btn-hero">Start Trading Now</a>
-                            <a href="#" class="btn btn-secondary btn-hero">Watch Demo</a>
+                            <a href="#" onclick="navigateTo('auth')" class="btn btn-primary btn-hero">Start Trading Now</a>
+                            <a href="#" onclick="navigateTo('dashboard')" class="btn btn-secondary btn-hero">Watch Demo</a>
                         </div>
                         <div class="hero-stats">
                             <div class="stat-item">
@@ -787,7 +787,7 @@
                         Simply paste market analysis articles and let Claude AI automatically generate 
                         sophisticated trading strategies tailored to current market conditions.
                     </p>
-                    <a href="#" class="feature-link">Learn More →</a>
+                    <a href="#" onclick="navigateTo('strategy_builder')" class="feature-link">Learn More →</a>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">⚡</div>
@@ -796,7 +796,7 @@
                         Test your strategies against historical data with our lightning-fast backtesting 
                         engine. Get detailed performance metrics and AI-powered insights.
                     </p>
-                    <a href="#" class="feature-link">Try Backtesting →</a>
+                    <a href="#" onclick="navigateTo('backtesting')" class="feature-link">Try Backtesting →</a>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">📊</div>
@@ -805,7 +805,7 @@
                         Access comprehensive financial data from FMP, FRED, CBOE, and Yahoo Finance. 
                         All integrated seamlessly into your trading strategies.
                     </p>
-                    <a href="#" class="feature-link">Explore Data →</a>
+                    <a href="#" onclick="navigateTo('data_features')" class="feature-link">Explore Data →</a>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">📱</div>
@@ -814,7 +814,7 @@
                         Trade on the go with our responsive mobile interface. Full functionality 
                         optimized for touch interactions and one-handed use.
                     </p>
-                    <a href="#" class="feature-link">Get Mobile App →</a>
+                    <a href="#" onclick="navigateTo('landing')" class="feature-link">Get Mobile App →</a>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">📈</div>
@@ -823,7 +823,7 @@
                         Monitor your portfolio performance with real-time analytics, risk metrics, 
                         and AI-powered insights to optimize your trading results.
                     </p>
-                    <a href="#" class="feature-link">View Analytics →</a>
+                    <a href="#" onclick="navigateTo('analytics')" class="feature-link">View Analytics →</a>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">🛡️</div>
@@ -832,7 +832,7 @@
                         Bank-grade security with end-to-end encryption, two-factor authentication, 
                         and secure API key management for all your trading activities.
                     </p>
-                    <a href="#" class="feature-link">Security Details →</a>
+                    <a href="#" onclick="navigateTo('profile')" class="feature-link">Security Details →</a>
                 </div>
             </div>
         </div>
@@ -939,8 +939,8 @@
                     Join thousands of traders who've already transformed their trading with EaseTrader
                 </p>
                 <div class="cta-buttons">
-                    <a href="#" class="btn btn-cta">Start Free Trial</a>
-                    <a href="#" class="btn btn-cta-secondary">View Pricing</a>
+                    <a href="#" onclick="navigateTo('auth')" class="btn btn-cta">Start Free Trial</a>
+                    <a href="#" onclick="navigateTo('subscription')" class="btn btn-cta-secondary">View Pricing</a>
                 </div>
             </div>
         </div>
@@ -958,9 +958,9 @@
                 <div class="footer-section">
                     <h3>Platform</h3>
                     <ul>
-                        <li><a href="#">Strategy Builder</a></li>
-                        <li><a href="#">Backtesting</a></li>
-                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#" onclick="navigateTo('strategy_builder')">Strategy Builder</a></li>
+                        <li><a href="#" onclick="navigateTo('backtesting')">Backtesting</a></li>
+                        <li><a href="#" onclick="navigateTo('analytics')">Analytics</a></li>
                         <li><a href="#">Data Sources</a></li>
                     </ul>
                 </div>
