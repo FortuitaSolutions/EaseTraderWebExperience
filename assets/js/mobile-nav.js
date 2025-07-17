@@ -193,16 +193,22 @@
             });
         });
         
-        // Handle "Get Started" buttons
-        const buttons = document.querySelectorAll('button, a');
-        buttons.forEach(button => {
-            const text = button.textContent.toLowerCase();
-            if (text.includes('get started') || text.includes('sign in') || text.includes('login')) {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navigateTo('auth');
-                });
-            }
-        });
+        // Handle "Get Started" buttons - but not on landing page where they already work
+        if (currentPage !== 'landing') {
+            const buttons = document.querySelectorAll('button, a');
+            buttons.forEach(button => {
+                const text = button.textContent.toLowerCase();
+                // Skip the "Continue without login" button
+                if (text.includes('continue without login')) {
+                    return;
+                }
+                if (text.includes('get started') || text.includes('sign in') || text.includes('login')) {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        navigateTo('auth');
+                    });
+                }
+            });
+        }
     }
 })();
